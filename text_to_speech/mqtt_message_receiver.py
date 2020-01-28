@@ -1,7 +1,6 @@
 import json
 import logging
 import paho.mqtt.client as mqtt
-import playsound
 import subprocess
 
 import polly_communicator
