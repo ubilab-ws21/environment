@@ -22,7 +22,8 @@ class MessageHandler:
             audio_file = polly_communicator.generate_audio_file(message, self.working_dir)
             subprocess.run(
                     ["mpg123", "-a", "plughw:CARD=PCH,DEV=0", audio_file],
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                    # ["mpg123", audio_file],
+                    stdout=subprocess.STDOUT, stderr=subprocess.STDOUT
                     )
             # playsound.playsound(audio_file) # playsound doesn't work.
         except Exception as e:
