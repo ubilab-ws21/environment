@@ -2,6 +2,7 @@ import json
 import logging
 import paho.mqtt.client as mqtt
 import playsound
+import subprocess
 
 import polly_communicator
 
@@ -20,7 +21,11 @@ class MessageHandler:
         message = json.loads(msg.payload.decode("utf-8"))
         try:
             audio_file = polly_communicator.generate_audio_file(message, self.working_dir)
-            playsound.playsound(audio_file)
+            subprocess.run(
+                    ["mpg123", "-a", "plughw:CARD=PCH,DEV=0", audio_file],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                    )
+            # playsound.playsound(audio_file) # playsound doesn't work.
         except Exception as e:
             LOGGER.exception("some error occurred")
 
