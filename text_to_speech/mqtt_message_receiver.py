@@ -3,15 +3,23 @@ import logging
 import paho.mqtt.client as mqtt
 import subprocess
 
+import gst
 import polly_communicator
 
 LOGGER = logging.getLogger(__name__)
+
+
+# p = Player()
+# p.play("gst.mp3", "hw:CARD=PCH,DEV=0")
+# time.sleep(1)
+# p.play("gst.mp3", "hw:CARD=PCH,DEV=0")
 
 class MessageHandler:
 
     def __init__(self, topic_name, working_dir):
         self.topic_name = topic_name
         self.working_dir = working_dir
+        self.player = gst.Player()
 
     def on_connect(self, client, userdata, flags, rc):
         client.subscribe(self.topic_name)
@@ -20,11 +28,7 @@ class MessageHandler:
         message = json.loads(msg.payload.decode("utf-8"))
         try:
             audio_file = polly_communicator.generate_audio_file(message, self.working_dir)
-            subprocess.run(
-                    ["mpg123", "-a", "plughw:CARD=PCH,DEV=0", audio_file],
-                    # ["mpg123", audio_file],
-                    stdout=subprocess.STDOUT, stderr=subprocess.STDOUT
-                    )
+            self.player.play(audio_file, "hw:CARD=PCH,DEV=0")
             # playsound.playsound(audio_file) # playsound doesn't work.
         except Exception as e:
             LOGGER.exception("some error occurred")
