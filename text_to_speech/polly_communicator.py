@@ -55,8 +55,13 @@ class Message:
             fd.write(self.polly_response["AudioStream"].read())
         self.audio_file = filepath
 
-def generate_audio_file(mqtt_message, working_dir):
+def generate_audio_file(mqtt_message, working_dir, saved_audio_map):
     msg_obj = Message.instance_from_mqtt_msg(mqtt_message, working_dir)
-    msg_obj.synthesize_voice()
-    msg_obj.write_on_disk()
-    return msg_obj.audio_file
+    audio_file = saved_audio_map.get(msg_obj.speech_kwargs["Text"])
+    if audio_file:
+        return audio_file
+    else:
+        msg_obj.synthesize_voice()
+        msg_obj.write_on_disk()
+        saved_audio_map[msg_obj.speech_kwargs["Text"]] = msg_obj.audio_file
+        return msg_obj.audio_file
