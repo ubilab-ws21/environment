@@ -2,10 +2,18 @@ import argparse
 import configparser
 import json
 import logging
+import logging.handlers
+import signal
 
 import mqtt_message_receiver
 
-logging.basicConfig()
+LOGGER = logging.getLogger()
+
+def signal_handler(mqtt_client, saved_audio_map_file, saved_audio_map):
+    mqtt_client.disconnect()
+    with open(saved_audio_map_file, "w") as fd:
+        json.dump(saved_audio_map, fd)
+    LOGGER.info("Shutting down text to speech")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -13,6 +21,12 @@ def main():
     args = parser.parse_args()
     config = configparser.ConfigParser()
     config.read(args.config)
+    LOGGER.setLevel(config['logging']['level'])
+    rotating_handler = logging.handlers.TimedRotatingFileHandler(
+            config['logging']['file'], 'd', 1, 5)
+    formatter = logging.Formatter('[%(asctime)s][%(processName)-10s][%(levelname)s] %(message)s')
+    rotating_handler.setFormatter(formatter)
+    LOGGER.addHandler(rotating_handler)
     host = config['mqtt']['host']
     topic_name = config['mqtt']['topic_name']
     working_dir = config['speech']['working_dir']
@@ -22,9 +36,9 @@ def main():
         saved_audio_map = json.load(fd)
     mqtt_client = mqtt_message_receiver.start_listening(host, topic_name,
             working_dir, audio_device, saved_audio_map)
+    [signal.signal(sig, lambda signum, frame: signal_handler(mqtt_client,
+        saved_audio_map_file, saved_audio_map)) for sig in [signal.SIGINT, signal.SIGTERM]]
     mqtt_client.loop_forever()
-    with open(saved_audio_map_file, "w") as fd:
-        json.dump(saved_audio_map, fd)
 
 if __name__ == "__main__":
     main()

@@ -53,10 +53,12 @@ class Message:
         filepath = os.path.join(self.audio_root_dir, filename)
         with open(filepath, "wb") as fd:
             fd.write(self.polly_response["AudioStream"].read())
+        LOGGER.info("Wrote file {} on disk".format(filepath))
         self.audio_file = filepath
 
 def generate_audio_file(mqtt_message, working_dir, saved_audio_map):
     msg_obj = Message.instance_from_mqtt_msg(mqtt_message, working_dir)
+    LOGGER.info("Generating audio file for message {}".format(msg_obj.speech_kwargs["Text"]))
     audio_file = saved_audio_map.get(msg_obj.speech_kwargs["Text"])
     if audio_file:
         return audio_file

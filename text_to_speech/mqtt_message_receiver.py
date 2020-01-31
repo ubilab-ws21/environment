@@ -24,11 +24,11 @@ class MessageHandler:
     def on_message(self, client, userdata, msg):
         message = json.loads(msg.payload.decode("utf-8"))
         try:
+            LOGGER.info("Received request")
             audio_file = polly_communicator.generate_audio_file(message,
                     self.working_dir, self.saved_audio_map)
             self.player.play(audio_file, self.audio_device)
-            # self.player.play(audio_file, "hw:CARD=PCH,DEV=0")
-            # playsound.playsound(audio_file) # playsound doesn't work.
+            LOGGER.info("Played audio_file {}".format(audio_file))
         except Exception as e:
             LOGGER.exception("some error occurred")
 
