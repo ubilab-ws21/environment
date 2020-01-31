@@ -39,7 +39,7 @@ def main():
             working_dir, audio_device, saved_audio_map)
     [signal.signal(sig, lambda signum, frame: signal_handler(mqtt_client,
         saved_audio_map_file, saved_audio_map)) for sig in [signal.SIGINT, signal.SIGTERM]]
-    mqtt_client.loop_start()
+    mqtt_client.loop_forever()
     signal.pause()
 
 if __name__ == "__main__":
