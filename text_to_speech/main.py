@@ -11,6 +11,7 @@ LOGGER = logging.getLogger()
 
 def signal_handler(mqtt_client, saved_audio_map_file, saved_audio_map):
     mqtt_client.disconnect()
+    mqtt_client.loop_stop()
     with open(saved_audio_map_file, "w") as fd:
         json.dump(saved_audio_map, fd)
     LOGGER.info("Shutting down text to speech")
