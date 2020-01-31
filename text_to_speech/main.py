@@ -17,6 +17,7 @@ def main():
     topic_name = config['mqtt']['topic_name']
     working_dir = config['speech']['working_dir']
     saved_audio_map_file = config['speech']['saved_audio_map']
+    saved_audio_map_file = config['speech']['audio_device']
     with open(saved_audio_map_file, "r") as fd:
         saved_audio_map = json.load(fd)
     mqtt_client = mqtt_message_receiver.start_listening(host, topic_name,
