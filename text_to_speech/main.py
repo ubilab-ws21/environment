@@ -20,7 +20,7 @@ def main():
     with open(saved_audio_map_file, "r") as fd:
         saved_audio_map = json.load(fd)
     mqtt_client = mqtt_message_receiver.start_listening(host, topic_name,
-            working_dir, saved_audio_map)
+            working_dir, audio_device, saved_audio_map)
     mqtt_client.loop_forever()
     with open(saved_audio_map_file, "w") as fd:
         json.dump(saved_audio_map, fd)
