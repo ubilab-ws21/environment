@@ -58,11 +58,12 @@ class Message:
 
 def generate_audio_file(mqtt_message, working_dir, saved_audio_map):
     msg_obj = Message.instance_from_mqtt_msg(mqtt_message, working_dir)
-    LOGGER.info("Generating audio file for message {}".format(msg_obj.speech_kwargs["Text"]))
     audio_file = saved_audio_map.get(msg_obj.speech_kwargs["Text"])
     if audio_file:
+        LOGGER.info("Using saved audio file for message {}".format(msg_obj.speech_kwargs["Text"]))
         return audio_file
     else:
+        LOGGER.info("Generating audio file for message {}".format(msg_obj.speech_kwargs["Text"]))
         msg_obj.synthesize_voice()
         msg_obj.write_on_disk()
         saved_audio_map[msg_obj.speech_kwargs["Text"]] = msg_obj.audio_file
