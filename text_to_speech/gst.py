@@ -20,7 +20,7 @@ class Player:
             print("Error: %s: %s" % (err, debug))
 
     def play(self, file, device):
-        pipe = Gst.parse_launch('uridecodebin name=src ! audioconvert ! audioresample ! alsasink name=sink')
+        pipe = Gst.parse_launch('uridecodebin name=src ! audioconvert ! audioresample ! audio/x-raw, rate=48000 ! alsasink name=sink')
 
         file = Gst.filename_to_uri(file)
         pipe.get_by_name("src").set_property("uri", file)
