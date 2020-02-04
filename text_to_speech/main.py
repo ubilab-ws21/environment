@@ -4,6 +4,7 @@ import json
 import logging
 import logging.handlers
 import signal
+import sys
 
 import mqtt_message_receiver
 
@@ -14,8 +15,9 @@ def signal_handler(mqtt_client, saved_audio_map_file, saved_audio_map):
     mqtt_client.loop_stop()
     with open(saved_audio_map_file, "w") as fd:
         LOGGER.info("Saving played messages")
-        json.dump(saved_audio_map, fd)
+        json.dump(saved_audio_map, fd, indent=4)
     LOGGER.info("Shutting down text to speech")
+    sys.exit(0)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -34,12 +36,13 @@ def main():
     working_dir = config['speech']['working_dir']
     saved_audio_map_file = config['speech']['saved_audio_map']
     audio_device = config['speech']['audio_device']
+    saved_audios_dir = config['speech']['saved_audios_dir']
     LOGGER.info("Config parsed. Starting text-to-speech.")
     with open(saved_audio_map_file, "r") as fd:
         LOGGER.info("Loading previously played messages")
         saved_audio_map = json.load(fd)
     mqtt_client = mqtt_message_receiver.start_listening(host, topic_name,
-            working_dir, audio_device, saved_audio_map)
+            working_dir, audio_device, saved_audio_map, saved_audios_dir)
     [signal.signal(sig, lambda signum, frame: signal_handler(mqtt_client,
         saved_audio_map_file, saved_audio_map)) for sig in [signal.SIGINT, signal.SIGTERM]]
     mqtt_client.loop_forever()
