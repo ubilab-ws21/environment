@@ -48,7 +48,7 @@ def start_listening(host, topic_name, working_dir, audio_device,
         saved_audio_map, saved_audios_dir):
     mqtt_client = mqtt.Client()
     mqtt_client.connect(host)
-    LOGGER.info("MQTT client connected! Started listening ...")
+    LOGGER.info("MQTT client connected! Started listening on {} ...".format(topic_name))
     msg_handler = MessageHandler(topic_name, working_dir, audio_device,
             saved_audio_map, saved_audios_dir)
     mqtt_client.on_connect = msg_handler.on_connect
