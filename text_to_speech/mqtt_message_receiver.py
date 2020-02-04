@@ -24,9 +24,17 @@ class MessageHandler:
     def on_message(self, client, userdata, msg):
         message = json.loads(msg.payload.decode("utf-8"))
         try:
-            LOGGER.info("Received request")
-            audio_file = polly_communicator.generate_audio_file(message,
-                    self.working_dir, self.saved_audio_map)
+            if message.get("play_from_file"):
+                LOGGER.info("Received request to play a audio file.")
+                try:
+                    audio_file = message["file_location"]
+                except KeyError as e:
+                    LOGGER.error("file location was missing in the message {}".format(message))
+                    raise e
+            else:
+                LOGGER.info("Received request to play a text message.")
+                audio_file = polly_communicator.generate_audio_file(message,
+                        self.working_dir, self.saved_audio_map)
             self.player.play(audio_file, self.audio_device)
             LOGGER.info("Played audio_file {}".format(audio_file))
         except Exception as e:
@@ -35,6 +43,7 @@ class MessageHandler:
 def start_listening(host, topic_name, working_dir, audio_device, saved_audio_map):
     mqtt_client = mqtt.Client()
     mqtt_client.connect(host)
+    LOGGER.info("MQTT client connected! Started listening ...")
     msg_handler = MessageHandler(topic_name, working_dir, audio_device, saved_audio_map)
     mqtt_client.on_connect = msg_handler.on_connect
     mqtt_client.on_message = msg_handler.on_message
