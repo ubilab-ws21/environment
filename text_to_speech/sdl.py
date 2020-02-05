@@ -15,10 +15,10 @@ class Player:
 		if SDL_Init(SDL_INIT_AUDIO) != 0:
 			raise RuntimeError("Cannot initialize audio system: {}".format(SDL_GetError()))
 		f = 48000
-		if Mix_OpenAudio(f, MIX_DEFAULT_FORMAT, 2, 1024):
+		if Mix_OpenAudio(f, MIX_DEFAULT_FORMAT, 2, 4000):
 			raise RuntimeError("Cannot open mixed audio: {}".format(Mix_GetError()))
 
-		self.channels = Mix_AllocateChannels(16)
+		self.channels = Mix_AllocateChannels(8)
 		LOGGER.info("Device opened at %d Hz with %d mixing channels" % (f, self.channels))
 
 	def deinit(self):
@@ -50,7 +50,7 @@ if __name__ == "__main__":
 	p.wait()
 
 	p.play("sdl.mp3")
-	time.sleep(0.1)
+	time.sleep(0.5)
 	p.play("sdl.mp3")
 	p.wait()
 
