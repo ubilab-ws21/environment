@@ -4,7 +4,7 @@ import os
 import paho.mqtt.client as mqtt
 import subprocess
 
-import gst
+import sdl
 import polly_communicator
 
 LOGGER = logging.getLogger(__name__)
@@ -19,7 +19,8 @@ class MessageHandler:
         self.audio_device = audio_device
         self.saved_audio_map = saved_audio_map
         self.saved_audios_dir = saved_audios_dir
-        self.player = gst.Player()
+        self.player = sdl.Player()
+        self.player.init()
 
     def on_connect(self, client, userdata, flags, rc):
         client.subscribe(self.topic_name)
@@ -39,7 +40,7 @@ class MessageHandler:
                 LOGGER.info("Received request to play a text message.")
                 audio_file = polly_communicator.generate_audio_file(message,
                         self.working_dir, self.saved_audio_map)
-            self.player.play(audio_file, self.audio_device)
+            self.player.play(audio_file)
             LOGGER.info("Played audio_file {}".format(audio_file))
         except Exception as e:
             LOGGER.exception("some error occurred")
