@@ -11,6 +11,13 @@ import mqtt_message_receiver
 LOGGER = logging.getLogger()
 
 def signal_handler(mqtt_client, saved_audio_map_file, saved_audio_map):
+    """
+    Signal handler code.
+    It disconnects and stops the MQTT client.
+    It also saves a dictionary of text-message to audio-file on disk.
+    Audio files are never deleted. Each request to polly saves the audio file
+    to disk.
+    """
     mqtt_client.disconnect()
     mqtt_client.loop_stop()
     with open(saved_audio_map_file, "w") as fd:
@@ -25,12 +32,16 @@ def main():
     args = parser.parse_args()
     config = configparser.ConfigParser()
     config.read(args.config)
+
+    # Setup logging.
     LOGGER.setLevel(config['logging']['level'])
     rotating_handler = logging.handlers.TimedRotatingFileHandler(
             config['logging']['file'], 'd', 1, 5)
     formatter = logging.Formatter('[%(asctime)s][%(process)d][%(levelname)s] %(message)s')
     rotating_handler.setFormatter(formatter)
     LOGGER.addHandler(rotating_handler)
+
+    # Retrieve config parameters from the file.
     host = config['mqtt']['host']
     topic_name = config['mqtt']['topic_name']
     working_dir = config['speech']['working_dir']
@@ -38,6 +49,8 @@ def main():
     audio_device = config['speech']['audio_device']
     saved_audios_dir = config['speech']['saved_audios_dir']
     LOGGER.info("Config parsed. Starting text-to-speech.")
+
+    # Load the dictionary of text-message to audio-file.
     with open(saved_audio_map_file, "r") as fd:
         LOGGER.info("Loading previously played messages")
         saved_audio_map = json.load(fd)

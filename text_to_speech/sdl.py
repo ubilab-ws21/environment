@@ -6,6 +6,10 @@ from sdl2.sdlmixer import *
 LOGGER = logging.getLogger(__name__)
 
 class Player:
+    """
+    This player class uses sdl2 and it can handle multiple audio files played
+    simultaneously.
+    """
 	def __init__(self, channels = 16, path='.'):
 		self.channels = channels
 		self.path = os.path.realpath(path)
@@ -43,6 +47,9 @@ class Player:
 
 
 if __name__ == "__main__":
+        """
+        Test function to test audio play on a machine.
+        """
 	p = Player()
 	p.init()
 

@@ -42,11 +42,18 @@ class Message:
             raise TextMessageParsingError("Can't find the message to play.  KeyError {}".format(e.message))
 
     def synthesize_voice(self):
+        """
+        Hits the polly API with the given parameters and a response is returned
+        with the audio message encoded in bytes.
+        """
         response = self.client.synthesize_speech(**self.speech_kwargs)
         LOGGER.debug("Response received {}".format(response))
         self.polly_response = response
 
     def write_on_disk(self):
+        """
+        Response received from the polly API is written to an audio file.
+        """
         filename = "{}.{}".format(
                 self.polly_response["ResponseMetadata"]["RequestId"],
                 self.speech_kwargs["OutputFormat"])
@@ -57,6 +64,12 @@ class Message:
         self.audio_file = filepath
 
 def generate_audio_file(mqtt_message, working_dir, saved_audio_map):
+    """
+    This function returns the audio-file for the received message.
+    If there is already an audio-file for the given message, that file is
+    played right away without hitting the polly API. Else, audio-file is
+    generated for the message.
+    """
     msg_obj = Message.instance_from_mqtt_msg(mqtt_message, working_dir)
     audio_file = saved_audio_map.get(msg_obj.speech_kwargs["Text"])
     if audio_file:

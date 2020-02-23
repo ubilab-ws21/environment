@@ -23,9 +23,18 @@ class MessageHandler:
         self.player.init()
 
     def on_connect(self, client, userdata, flags, rc):
+        """
+        Callback function when MQTT client connects.
+        """
         client.subscribe(self.topic_name)
 
     def on_message(self, client, userdata, msg):
+        """
+        Callback function when MQTT client receives a message on the given
+        topic.
+        It can play a text-message using polly API or it can simply play an
+        audio file.
+        """
         message = json.loads(msg.payload.decode("utf-8"))
         try:
             if message.get("play_from_file"):
@@ -47,6 +56,9 @@ class MessageHandler:
 
 def start_listening(host, topic_name, working_dir, audio_device,
         saved_audio_map, saved_audios_dir):
+    """
+    Sets up the MQTT client and registers the connect and on_message handlers.
+    """
     mqtt_client = mqtt.Client()
     mqtt_client.connect(host)
     LOGGER.info("MQTT client connected! Started listening on {} ...".format(topic_name))
