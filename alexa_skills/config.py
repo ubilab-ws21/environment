@@ -39,8 +39,12 @@ ACTUAL_NAME_TO_PUZZLE = {
         "server": "shutting down stasis"
         }
 
+
 class Puzzle:
 
+    """
+    This class is building block for the game tree.
+    """
     def __init__(self, puzzle_name, children=None):
         self.puzzle_name = puzzle_name
         self.children = children
@@ -48,6 +52,7 @@ class Puzzle:
     def get_children(self):
         return self.children
 
+# Below code builds up the game tree.
 server = Puzzle("server")
 prototype = Puzzle("prototype", children=[server])
 door2 = Puzzle("door2", children=[prototype])

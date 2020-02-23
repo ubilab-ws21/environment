@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# This sample demonstrates handling intents from an Alexa skill using the Alexa Skills Kit SDK for Python.
-# Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
-# session persistence, api calls, and more.
-# This sample is built using the handler classes approach in skill builder.
+# This module handles all the alexa callbacks.
 import boto3
 import decimal
 import json
@@ -15,7 +12,6 @@ from ask_sdk_core.skill_builder import CustomSkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
 from ask_sdk_core.dispatch_components import AbstractExceptionHandler
 from ask_sdk_core.handler_input import HandlerInput
-# from ask_sdk_s3.adapter import S3Adapter
 from ask_sdk_model import Response
 from botocore.exceptions import ClientError
 
@@ -23,6 +19,7 @@ import config
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+# Create a dynamo db client.
 dynamodb = boto3.client('dynamodb')
 CLUE_COUNTER = 0
 CURRENT_PUZZLE = None
@@ -138,44 +135,15 @@ class SessionEndedRequestHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
-# Time handler not required as of now.
-# class TimeLeftHandler(AbstractRequestHandler):
-#     """This intent just tells you the time left."""
-#     def can_handle(self, handler_input):
-#         # type: (HandlerInput) -> bool
-#         return ask_utils.is_intent_name("TimeLeft")(handler_input)
-
-#     def handle(self, handler_input):
-#         # type: (HandlerInput) -> Response
-#         # start_time = handler_input.attributes_manager.persistent_attributes["start_time"]
-#         start_time = 0
-#         try:
-#             response = dynamodb.get_item(TableName='stassis_info',
-#                     Key={
-#                         'game_id': {'N': '1'}
-#                         }
-#                     )
-#         except ClientError as e:
-#             logger.error(e.response['Error']['Message'])
-#         else:
-#             item = response['Item']
-#             logger.info("GetItem succeeded:")
-#             logger.info(json.dumps(item, indent=4, cls=DecimalEncoder))
-#             start_time = item['start_time']['S']
-#         logger.info(start_time)
-#         logger.info("I'm in time handler.")
-#         mins_left = int(60 - (time.time() - float(start_time))/60)
-#         speak_output = "You have " + str(mins_left) + " minutes left before the system lockdown."
-
-#         return (
-#             handler_input.response_builder
-#                 .speak(speak_output)
-#                 # .ask("add a reprompt if you want to keep the session open for the user to respond")
-#                 .response
-#         )
-
 class GiveClueHandler(AbstractRequestHandler):
-    """This intent gives the hint depending on the current game level."""
+    """
+    This intent gives the hint depending on the current game level.
+    It is not complete and not ready to use. Although, it can be extended
+    easily.
+    The idea is, an external script will update the next hint to give depending
+    on the game scenario in the dynamodb. This handler can pick up that from
+    the db and read out relevant hint.
+    """
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return ask_utils.is_intent_name("GiveClue")(handler_input)
