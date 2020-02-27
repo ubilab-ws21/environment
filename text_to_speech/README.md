@@ -14,26 +14,29 @@ msg1 = {
 msg2 = {
         "method": "MESSAGE",
         "data": "<speak>It is a normal voice. <amazon:effect vocal-tract-length='+100%'>Play something in with different vocal tract length</amazon:effect> </speak>",
-        "kwargs": {'TextType': 'ssml', 'VoiceId'='Brian', 'LanguageCode'='en-GB'}
+        "kwargs": {"TextType": "ssml", "VoiceId":"Brian", "LanguageCode":"en-GB"}
         }
 ```
 The messages should be sent to the topic specified in the config file.
 
 ## Running parameters
-Below parameters should be saved under a config file.
-`[speech]`
-`voice_id`: Default Voice ID of the Polly service to use.
-`output_format`: Default format of the audio file in which it should be saved.
-`working_dir`: Working directory where all audio files would be saved.
+Below parameters should be saved under a config file.\
+`[speech]`\
+`voice_id`: Default Voice ID of the Polly service to use.\
+`output_format`: Default format of the audio file in which it should be saved.\
+`working_dir`: Working directory where all audio files would be saved.\
 `saved_audio_map`: Cache file which contains all the text messages with the corresponding audio file.
 
-`[mqtt]`
-`host`: MQTT server address.
+
+`[mqtt]`\
+`host`: MQTT server address.\
 `topic_name`: MQTT topic on which this service would listen.
 
-`[logging]`
-`level`: Logging level.
+
+`[logging]`\
+`level`: Logging level.\
 `file`: Log file address.
+
 
 ## Start Command
 `/path/to/the/text-to-speech/service/on/the/disk/main.py -c /path/to/the/config/file/filename.cfg`
