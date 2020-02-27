@@ -8,11 +8,11 @@ This code runs on a local system which has speakers and correct *audio-drivers*.
 ## MQTT messages
 ```json
 msg1 = {
-        "method": "MESSAGE",
+        "method": "message",
         "data": "I would like to play the message.",
         }
 msg2 = {
-        "method": "MESSAGE",
+        "method": "message",
         "data": "<speak>It is a normal voice. <amazon:effect vocal-tract-length='+100%'>Play something in with different vocal tract length</amazon:effect> </speak>",
         "kwargs": {"TextType": "ssml", "VoiceId":"Brian", "LanguageCode":"en-GB"}
         }
