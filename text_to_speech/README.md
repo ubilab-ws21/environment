@@ -14,7 +14,7 @@ msg1 = {
 msg2 = {
         "method": "MESSAGE",
         "data": "<speak>It is a normal voice. <amazon:effect vocal-tract-length='+100%'>Play something in with different vocal tract length</amazon:effect> </speak>",
-        "kwargs": {'TextType': 'ssml', VoiceId='Brian', LanguageCode='en-GB'}
+        "kwargs": {'TextType': 'ssml', 'VoiceId'='Brian', 'LanguageCode'='en-GB'}
         }
 ```
 The messages should be sent to the topic specified in the config file.
