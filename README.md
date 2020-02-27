@@ -7,7 +7,7 @@ The environment project is split in two parts:
 
 ## AI
 
-...
+
 
 ## LEDstrips
 
