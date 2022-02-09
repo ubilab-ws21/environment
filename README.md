@@ -13,7 +13,7 @@ The environment project is split in two parts:
 
 ## LEDstrips
 
-Please, read the related README.MD inside the submodule Arduino → [README.MD](/lightstrips/README.MD)
+README for the lightstrips can be found [here](/lightstrips/README.MD)
 
 ## Contributors
 Jybz,
