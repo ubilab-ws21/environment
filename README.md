@@ -18,3 +18,5 @@ Please, read the related README.MD inside the submodule Arduino → [README.MD](
 ## Contributors
 Jybz
 Saurav
+Sebastian Böttcher
+Benjamin Völker
