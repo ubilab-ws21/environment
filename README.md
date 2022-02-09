@@ -16,7 +16,7 @@ The environment project is split in two parts:
 Please, read the related README.MD inside the submodule Arduino → [README.MD](https://github.com/Jybs/Arduino/blob/master/README.MD)
 
 ## Contributors
-Jybz
-Saurav
-Sebastian Böttcher
+Jybz,
+Saurav,
+Sebastian Böttcher,
 Benjamin Völker
