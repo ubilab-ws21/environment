@@ -3,7 +3,20 @@ import paho.mqtt.client as mqtt
 
 OFF_VIDEO = os.path.join(os.path.abspath(os.path.dirname(__file__)), "black.mp4")
 BASE_VIDCMD = ["ffplay", "-v", "error", "-fs", "-x", "1024", "-y", "768"]
+
+ENV = os.environ.copy()
+ENV["DISPLAY"] = ":0.0"
+
 vidproc = None
+
+def playVideo(vidcmd):
+    global vidproc
+
+    print("[videoplayer] Playing video with command: " + " ".join(vidcmd))
+    try: vidproc.kill()
+    except: pass
+    vidproc = subprocess.Popen(vidcmd, env=ENV)
+
 
 def signal_handler(mqtt_client):
     print("[videoplayer] Disconnecting from MQTT...")
@@ -24,7 +37,6 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    global vidproc
 
     try:
         j = json.loads(msg.payload.decode("utf-8"))
@@ -32,7 +44,8 @@ def on_message(client, userdata, msg):
         print("[videoplayer] Got invalid or non-JSON message: " + str(msg.payload))
         return
 
-    vidcmd = [].extend(BASE_VIDCMD)
+    vidcmd = []
+    vidcmd.extend(BASE_VIDCMD)
 
     # {"method": "trigger", "state": "on", "data": {"path":"/foo/bar.mp4", "loop": True, "mute": True}}
     if "method" in j and j["method"] == "trigger" and "state" in j and (j["state"] == "on" or j["state"] == "off"):
@@ -47,16 +60,13 @@ def on_message(client, userdata, msg):
                 print("[videoplayer] Got invalid message: " + str(j))
                 return
         elif j["state"] == "off":
+            print("[videoplayer] Got trigger off.")
             vidcmd.extend(["-an", "-loop", "0", OFF_VIDEO])
     else:
         print("[videoplayer] Got invalid message: " + str(j))
         return
     
-    print("[videoplayer] Playing video with command: " + " ".join(vidcmd))
-    try: vidproc.kill()
-    except: pass
-    vidproc = subprocess.Popen(vidcmd)
-
+    playVideo(vidcmd)
 
 if __name__ == "__main__":
     client = mqtt.Client()
@@ -65,7 +75,7 @@ if __name__ == "__main__":
 
     client.connect("localhost", 1883, 60)
 
-    vidproc = subprocess.Popen(BASE_VIDCMD + ["-an", "-loop", "0", OFF_VIDEO])
+    playVideo(BASE_VIDCMD + ["-an", "-loop", "0", OFF_VIDEO])
 
     [signal.signal(sig, lambda signum, frame: signal_handler(client)) for sig in [signal.SIGINT, signal.SIGTERM]]
     client.loop_start()
