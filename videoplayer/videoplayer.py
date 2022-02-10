@@ -32,7 +32,7 @@ def on_message(client, userdata, msg):
         print("[videoplayer] Got invalid or non-JSON message: " + str(msg.payload))
         return
 
-    vidcmd = BASE_VIDCMD
+    vidcmd = [].extend(BASE_VIDCMD)
 
     # {"method": "trigger", "state": "on", "data": {"path":"/foo/bar.mp4", "loop": True, "mute": True}}
     if "method" in j and j["method"] == "trigger" and "state" in j and (j["state"] == "on" or j["state"] == "off"):
